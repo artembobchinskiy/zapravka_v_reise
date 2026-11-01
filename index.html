@@ -8,9 +8,15 @@
   <style>
     :root {
       --brand: #ff6200;
-      --ink: #000;
+      --ink: #000000;
       --sub: #64748b;
-      --bg: #f5f5f5;
+      --card: #f5f5f5;
+      --screen-bg: #ffffff;
+      --page-bg: #e9ebef;
+
+      --error-text: #c75b4c;
+      --error-card: rgba(255, 244, 242, 0.96);
+      --error-button: rgba(203, 97, 80, 0.88);
     }
 
     * {
@@ -19,33 +25,33 @@
 
     body {
       margin: 0;
-      background: #e9ebef;
+      background: var(--page-bg);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--ink);
     }
 
     .screen {
+      position: relative;
       width: 390px;
       height: 844px;
       margin: 24px auto;
-      background: #fff;
+      background: var(--screen-bg);
       border-radius: 36px;
       overflow: hidden;
-      position: relative;
       display: flex;
       flex-direction: column;
       box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
     }
 
     .status {
+      flex: none;
       height: 47px;
+      padding: 0 28px 8px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      padding: 0 28px 8px;
       font-size: 15px;
       font-weight: 600;
-      flex: none;
     }
 
     .content {
@@ -54,13 +60,18 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      overflow: hidden;
     }
 
     .title {
+      margin: 4px 0 0;
       font-size: 28px;
       font-weight: 700;
-      margin: 4px 0 0;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
     }
 
     .muted {
@@ -68,16 +79,10 @@
       font-size: 12px;
     }
 
-    .card {
-      background: var(--bg);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
     .route {
+      margin: 4px 0;
       font-size: 20px;
       font-weight: 600;
-      margin: 4px 0;
     }
 
     .limit {
@@ -88,35 +93,85 @@
 
     .progress {
       height: 6px;
+      margin-top: 10px;
       background: #e3e6eb;
       border-radius: 3px;
       overflow: hidden;
-      margin-top: 10px;
     }
 
     .progress-fill {
       display: block;
-      height: 100%;
       width: 0;
+      height: 100%;
       background: var(--brand);
+    }
+
+    .bottom {
+      flex: none;
+      padding: 12px 24px 34px;
     }
 
     .btn {
       display: block;
       width: 100%;
-      text-align: center;
-      background: var(--brand);
-      color: #fff;
-      font-weight: 600;
-      font-size: 16px;
-      border-radius: 999px;
-      padding: 16px;
+      height: 90px;
       border: 0;
+      border-radius: 999px;
+      background: var(--brand);
+      color: #ffffff;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
     }
 
-    .bottom {
-      padding: 12px 24px 34px;
-      flex: none;
+    .error-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(4px);
+    }
+
+    .error-overlay.visible {
+      display: flex;
+    }
+
+    .error-dialog {
+      width: 100%;
+      padding: 18px 16px 16px;
+      background: var(--error-card);
+      border-radius: 20px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+    }
+
+    .error-message {
+      margin: 0 0 16px;
+      color: var(--error-text);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .retry-btn {
+      display: block;
+      width: 100%;
+      height: 90px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--error-button);
+      color: #ffffff;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .retry-btn:active {
+      transform: scale(0.97);
+      opacity: 0.75;
     }
   </style>
 </head>
@@ -136,7 +191,7 @@
         Заправка в рейсе
       </div>
 
-      <div class="card">
+      <section class="card">
 
         <div class="muted">
           Текущий рейс · <span id="trip-date">—</span>
@@ -150,9 +205,9 @@
           Тягач —
         </div>
 
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
 
         <div class="muted">
           Лимит на топливо
@@ -173,14 +228,43 @@
           </span>
         </div>
 
-      </div>
+      </section>
 
     </div>
 
     <div class="bottom">
+
       <button class="btn" type="button">
         Заправиться
       </button>
+
+    </div>
+
+    <div
+      class="error-overlay"
+      id="error-overlay"
+      aria-hidden="true"
+    >
+
+      <div class="error-dialog">
+
+        <p
+          class="error-message"
+          id="error-message"
+        >
+          Нет связи с сервером
+        </p>
+
+        <button
+          class="retry-btn"
+          id="retry-btn"
+          type="button"
+        >
+          Повторить
+        </button>
+
+      </div>
+
     </div>
 
   </main>

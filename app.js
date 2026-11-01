@@ -6,6 +6,10 @@ const limitLeft = document.getElementById('limit-left');
 const limitTotal = document.getElementById('limit-total');
 const limitProgressFill = document.getElementById('limit-progress-fill');
 
+const errorOverlay = document.getElementById('error-overlay');
+const errorMessage = document.getElementById('error-message');
+const retryButton = document.getElementById('retry-btn');
+
 
 function formatMoney(value) {
   return new Intl.NumberFormat('ru-RU', {
@@ -26,41 +30,47 @@ function formatDate(dateString) {
 
 function showTrip(trip) {
   tripDate.textContent = formatDate(trip.date);
+  tripRoute.textContent = `${trip.from} → ${trip.to}`;
+  tripTruck.textContent = `Тягач ${trip.truck}`;
 
-  tripRoute.textContent =
-    `${trip.from} → ${trip.to}`;
+  limitLeft.textContent = formatMoney(trip.limitLeft);
+  limitTotal.textContent = formatMoney(trip.limitTotal);
 
-  tripTruck.textContent =
-    `Тягач ${trip.truck}`;
+  const percent = trip.limitTotal > 0
+    ? (trip.limitLeft / trip.limitTotal) * 100
+    : 0;
 
-  limitLeft.textContent =
-    formatMoney(trip.limitLeft);
+  limitProgressFill.style.width = `${Math.min(percent, 100)}%`;
+}
 
-  limitTotal.textContent =
-    formatMoney(trip.limitTotal);
 
-  const limitPercent =
-    trip.limitTotal > 0
-      ? (trip.limitLeft / trip.limitTotal) * 100
-      : 0;
+function showNetworkError() {
+  errorMessage.textContent = 'Нет связи с сервером';
+  errorOverlay.classList.add('visible');
+  errorOverlay.setAttribute('aria-hidden', 'false');
+}
 
-  limitProgressFill.style.width =
-    `${Math.min(limitPercent, 100)}%`;
+
+function hideNetworkError() {
+  errorOverlay.classList.remove('visible');
+  errorOverlay.setAttribute('aria-hidden', 'true');
 }
 
 
 async function loadTrip() {
+  hideNetworkError();
+
   try {
     const trip = await FakeApi.getTrip();
-
     showTrip(trip);
   } catch (error) {
-    console.error(
-      'Не удалось загрузить данные рейса:',
-      error
-    );
+    if (error.code === 'NETWORK_ERROR') {
+      showNetworkError();
+    }
   }
 }
 
+
+retryButton.addEventListener('click', loadTrip);
 
 loadTrip();
