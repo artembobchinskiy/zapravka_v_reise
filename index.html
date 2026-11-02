@@ -8,15 +8,14 @@
   <style>
     :root {
       --brand: #ff6200;
-      --ink: #000000;
+      --brand-soft: #fff0e6;
+      --ink: #000;
       --sub: #64748b;
       --card: #f5f5f5;
-      --screen-bg: #ffffff;
       --page-bg: #e9ebef;
-
       --error-text: #c75b4c;
-      --error-card: rgba(255, 244, 242, 0.96);
-      --error-button: rgba(203, 97, 80, 0.88);
+      --error-card: rgba(255, 244, 242, .96);
+      --error-button: rgba(203, 97, 80, .88);
     }
 
     * {
@@ -35,12 +34,12 @@
       width: 390px;
       height: 844px;
       margin: 24px auto;
-      background: var(--screen-bg);
+      background: #fff;
       border-radius: 36px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+      box-shadow: 0 10px 30px rgba(17, 24, 39, .08);
     }
 
     .status {
@@ -54,12 +53,25 @@
       font-weight: 600;
     }
 
-    .content {
+    .content,
+    .fuel-content,
+    .volume-content,
+    .stations-content {
       flex: 1;
-      padding: 4px 24px 20px;
+      min-height: 0;
+      padding: 4px 24px 14px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+    }
+
+    .volume-content {
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+
+    .volume-content .title {
+      white-space: nowrap;
     }
 
     .title {
@@ -69,9 +81,9 @@
     }
 
     .card {
-      background: var(--card);
-      border-radius: 16px;
       padding: 16px;
+      border-radius: 16px;
+      background: var(--card);
     }
 
     .muted {
@@ -88,7 +100,7 @@
     .limit {
       font-size: 34px;
       font-weight: 700;
-      letter-spacing: -0.5px;
+      letter-spacing: -.5px;
     }
 
     .progress {
@@ -106,32 +118,333 @@
       background: var(--brand);
     }
 
-    .bottom {
+    .bottom,
+    .page-bottom {
       flex: none;
       padding: 12px 24px 34px;
     }
 
-    .btn {
-      display: block;
+    .page-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .best-station-btn,
+    .retry-btn {
       width: 100%;
-      height: 90px;
       border: 0;
-      border-radius: 999px;
-      background: var(--brand);
-      color: #ffffff;
-      text-align: center;
-      font-size: 18px;
       font-weight: 600;
+    }
+
+    .primary-btn,
+    .best-station-btn,
+    .retry-btn {
+      height: 90px;
+      border-radius: 30px;
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .primary-btn,
+    .best-station-btn {
+      background: var(--brand);
+    }
+
+    .secondary-btn {
+      height: 70px;
+      border-radius: 24px;
+      background: var(--card);
+      color: var(--ink);
+      font-size: 17px;
+    }
+
+    .primary-btn:disabled {
+      background: #e4e6e9;
+      color: #9ca3ad;
+    }
+
+    .best-station-btn:disabled {
+      opacity: 1;
+    }
+
+    .primary-btn:not(:disabled):active,
+    .secondary-btn:active,
+    .retry-btn:active {
+      transform: scale(.97);
+      opacity: .8;
+    }
+
+    .fuel-page,
+    .volume-page,
+    .stations-page {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: none;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .fuel-page.visible,
+    .volume-page.visible,
+    .stations-page.visible {
+      display: flex;
+    }
+
+    .fuel-description {
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .fuel-options {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .fuel-option {
+      position: relative;
+      min-height: 76px;
+      padding: 12px;
+      border: 2px solid transparent;
+      border-radius: 18px;
+      background: var(--card);
+      color: var(--ink);
+      text-align: left;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .fuel-option.selected {
+      border-color: var(--brand);
+      background: var(--brand-soft);
+    }
+
+    .fuel-option-check {
+      position: absolute;
+      top: 9px;
+      right: 10px;
+      color: var(--brand);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .volume-card {
+      padding: 18px;
+      border-radius: 18px;
+      background: var(--card);
+    }
+
+    .volume-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .volume-input {
+      width: 100%;
+      height: 72px;
+      padding: 0 16px;
+      border: 1px solid #d9dde3;
+      border-radius: 18px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 30px;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .volume-input:focus {
+      border-color: var(--brand);
+    }
+
+    .volume-unit {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .volume-label {
+      margin-top: 10px;
+      color: var(--sub);
+      font-size: 13px;
+    }
+
+    .fuel-selection {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: var(--card);
+    }
+
+    .fuel-selection-label {
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .selected-fuels {
+      margin-top: 3px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .change-fuel-btn {
+      flex: none;
+      width: 108px;
+      height: 52px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 16px;
+      background: #fff;
+      color: var(--brand);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .manual-search-title {
+      margin: 2px 0 -6px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .station-search {
+      width: 100%;
+      height: 70px;
+      padding: 0 18px;
+      border: 1px solid #d9dde3;
+      border-radius: 18px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .station-search:focus {
+      border-color: var(--brand);
+    }
+
+    .station-search::placeholder {
+      color: #a2a9b3;
+    }
+
+    .station-warning {
+      display: none;
+      margin-top: -5px;
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .search-message {
+      color: var(--sub);
+      font-size: 13px;
+    }
+
+    .search-message:empty {
+      display: none;
+    }
+
+    .station-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .station-item {
+      flex: none;
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid transparent;
+      border-radius: 18px;
+      background: var(--card);
+      color: var(--ink);
+      text-align: left;
+      font: inherit;
+    }
+
+    .station-item.selected {
+      border-color: var(--brand);
+      background: #fff4ec;
+    }
+
+    .station-name {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .station-check {
+      color: var(--brand);
+    }
+
+    .station-info {
+      margin-top: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .station-distance {
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .station-direction {
+      padding: 3px 7px;
+      border: 1px solid #dfe3e8;
+      border-radius: 7px;
+      background: #f3f4f6;
+      color: var(--sub);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .station-fuels {
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .station-busy-note,
+    .station-address {
+      margin-top: 4px;
+      color: var(--sub);
+      font-size: 11px;
+      line-height: 1.3;
     }
 
     .error-overlay {
       position: absolute;
       inset: 0;
+      z-index: 5;
       display: none;
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, .28);
       backdrop-filter: blur(4px);
     }
 
@@ -142,9 +455,8 @@
     .error-dialog {
       width: 100%;
       padding: 18px 16px 16px;
-      background: var(--error-card);
       border-radius: 20px;
-      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+      background: var(--error-card);
     }
 
     .error-message {
@@ -152,125 +464,305 @@
       color: var(--error-text);
       text-align: center;
       font-size: 16px;
-      font-weight: 500;
-      line-height: 1.35;
     }
 
     .retry-btn {
-      display: block;
-      width: 100%;
-      height: 90px;
-      border: 0;
-      border-radius: 999px;
       background: var(--error-button);
-      color: #ffffff;
-      text-align: center;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .retry-btn:active {
-      transform: scale(0.97);
-      opacity: 0.75;
     }
   </style>
 </head>
 
 <body>
 
-  <main class="screen">
+<main class="screen">
+
+  <div class="status">
+    <span>9:41</span>
+    <span>▮▮▮ ▭</span>
+  </div>
+
+  <div class="content">
+
+    <div class="title">Заправка в рейсе</div>
+
+    <section class="card">
+      <div class="muted">
+        Текущий рейс · <span id="trip-date">—</span>
+      </div>
+
+      <div class="route" id="trip-route">
+        Загрузка...
+      </div>
+
+      <div class="muted" id="trip-truck">
+        Тягач —
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="muted">
+        Лимит на топливо на весь рейс
+      </div>
+
+      <div class="limit" id="limit-left">
+        —
+      </div>
+
+      <div class="muted">
+        из <span id="limit-total">—</span>
+      </div>
+
+      <div class="progress">
+        <span
+          class="progress-fill"
+          id="limit-progress-fill"
+        ></span>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="bottom">
+    <button
+      class="primary-btn"
+      id="start-fueling-btn"
+      type="button"
+    >
+      Заправиться
+    </button>
+  </div>
+
+
+  <section class="fuel-page" id="fuel-page">
 
     <div class="status">
       <span>9:41</span>
       <span>▮▮▮ ▭</span>
     </div>
 
-    <div class="content">
+    <div class="fuel-content">
 
       <div class="title">
-        Заправка в рейсе
+        Выберите топливо
       </div>
 
-      <section class="card">
+      <div class="fuel-description">
+        Выберите один или несколько типов топлива для этого рейса.
+      </div>
 
-        <div class="muted">
-          Текущий рейс · <span id="trip-date">—</span>
-        </div>
-
-        <div class="route" id="trip-route">
-          Загрузка...
-        </div>
-
-        <div class="muted" id="trip-truck">
-          Тягач —
-        </div>
-
-      </section>
-
-      <section class="card">
-
-        <div class="muted">
-          Лимит на топливо
-        </div>
-
-        <div class="limit" id="limit-left">
-          —
-        </div>
-
-        <div class="muted">
-          из <span id="limit-total">—</span>
-        </div>
-
-        <div class="progress">
-          <span
-            class="progress-fill"
-            id="limit-progress-fill">
-          </span>
-        </div>
-
-      </section>
+      <div
+        class="fuel-options"
+        id="fuel-options"
+      ></div>
 
     </div>
 
-    <div class="bottom">
+    <div class="page-bottom">
 
-      <button class="btn" type="button">
-        Заправиться
+      <button
+        class="primary-btn"
+        id="fuel-continue-btn"
+        type="button"
+        disabled
+      >
+        Продолжить
+      </button>
+
+      <button
+        class="secondary-btn"
+        id="fuel-back-btn"
+        type="button"
+      >
+        Назад
       </button>
 
     </div>
 
-    <div
-      class="error-overlay"
-      id="error-overlay"
-      aria-hidden="true"
-    >
+  </section>
 
-      <div class="error-dialog">
 
-        <p
-          class="error-message"
-          id="error-message"
-        >
-          Нет связи с сервером
-        </p>
+  <section class="volume-page" id="volume-page">
 
-        <button
-          class="retry-btn"
-          id="retry-btn"
-          type="button"
-        >
-          Повторить
-        </button>
+    <div class="status">
+      <span>9:41</span>
+      <span>▮▮▮ ▭</span>
+    </div>
+
+    <div class="volume-content">
+
+      <div class="title">
+        Сколько топлива нужно?
+      </div>
+
+      <div class="volume-card">
+
+        <div class="volume-field">
+          <input
+            class="volume-input"
+            id="volume-input"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            placeholder="300"
+          >
+
+          <span class="volume-unit">
+            л
+          </span>
+        </div>
+
+        <div class="volume-label">
+          Общий объём необходимого топлива
+        </div>
 
       </div>
 
     </div>
 
-  </main>
+    <div class="page-bottom">
 
-  <script src="./fake-api.js"></script>
-  <script src="./app.js"></script>
+      <button
+        class="primary-btn"
+        id="volume-continue-btn"
+        type="button"
+        disabled
+      >
+        Продолжить
+      </button>
+
+      <button
+        class="secondary-btn"
+        id="volume-back-btn"
+        type="button"
+      >
+        Назад
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <section class="stations-page" id="stations-page">
+
+    <div class="status">
+      <span>9:41</span>
+      <span>▮▮▮ ▭</span>
+    </div>
+
+    <div class="stations-content">
+
+      <div class="title">
+        Выберите АЗС
+      </div>
+
+      <div class="fuel-selection">
+
+        <div>
+          <div class="fuel-selection-label">
+            Выбранное топливо
+          </div>
+
+          <div
+            class="selected-fuels"
+            id="selected-fuels"
+          ></div>
+        </div>
+
+        <button
+          class="change-fuel-btn"
+          id="change-fuel-btn"
+          type="button"
+        >
+          Изменить
+        </button>
+
+      </div>
+
+      <button
+        class="best-station-btn"
+        type="button"
+        disabled
+      >
+        Подобрать выгодную АЗС
+      </button>
+
+      <div class="manual-search-title">
+        Ручной выбор АЗС
+      </div>
+
+      <input
+        class="station-search"
+        id="station-search"
+        type="search"
+        placeholder="Название, сеть или адрес АЗС"
+        autocomplete="off"
+      >
+
+      <div
+        class="station-warning"
+        id="station-warning"
+      >
+        Проверьте сторону расположения АЗС на дороге
+      </div>
+
+      <div
+        class="station-list"
+        id="station-list"
+      ></div>
+
+      <div
+        class="search-message"
+        id="search-message"
+      ></div>
+
+    </div>
+
+    <div class="page-bottom">
+      <button
+        class="secondary-btn"
+        id="back-btn"
+        type="button"
+      >
+        Назад
+      </button>
+    </div>
+
+  </section>
+
+
+  <div
+    class="error-overlay"
+    id="error-overlay"
+    aria-hidden="true"
+  >
+
+    <div class="error-dialog">
+
+      <p
+        class="error-message"
+        id="error-message"
+      >
+        Нет связи с сервером
+      </p>
+
+      <button
+        class="retry-btn"
+        id="retry-btn"
+        type="button"
+      >
+        Повторить
+      </button>
+
+    </div>
+
+  </div>
+
+</main>
+
+<script src="./fake-api.js"></script>
+<script src="./app.js"></script>
 
 </body>
 </html>
