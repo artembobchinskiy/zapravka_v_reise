@@ -4,160 +4,1108 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Заправка в рейсе</title>
+
 <style>
-:root{--b:#ff6200;--bs:#fff0e6;--s:#64748b;--c:#f5f5f5;--bg:#e9ebef;--g:#16803c;--gs:#e8f7ee;--w:#a85b00;--ws:#fff5e8;--e:#c75b4c;--es:#fff4f2}
+:root{
+ --b:#ff6200;
+ --bs:#fff0e6;
+ --s:#64748b;
+ --c:#f5f5f5;
+ --bg:#e9ebef;
+ --g:#16803c;
+ --gs:#e8f7ee;
+ --w:#a85b00;
+ --ws:#fff5e8;
+ --e:#c75b4c;
+ --es:#fff4f2
+}
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#000}
+
+body{
+ margin:0;
+ background:var(--bg);
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ color:#000
+}
+
 button,input{font:inherit}
-.screen{position:relative;width:390px;height:844px;margin:24px auto;background:#fff;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px #11182714}
+
+.screen{
+ position:relative;
+ width:390px;
+ height:844px;
+ margin:24px auto;
+ background:#fff;
+ border-radius:36px;
+ overflow:hidden;
+ display:flex;
+ flex-direction:column;
+ box-shadow:0 10px 30px #11182714
+}
+
 .screen.restoring>:not(.error-overlay){visibility:hidden}
-.status{height:47px;padding:0 28px 8px;display:flex;justify-content:space-between;align-items:flex-end;font-size:15px;font-weight:600;flex:none}
-.content,.fuel-content,.volume-content,.stations-content,.station-content,.order-content,.result-content{flex:1;min-height:0;padding:4px 24px 14px;display:flex;flex-direction:column;gap:14px}
-.station-content,.order-content{overflow-y:auto}
-.volume-content{padding-left:18px;padding-right:18px}
-.volume-content .title{white-space:nowrap}
-.title{margin:4px 0 0;font-size:28px;font-weight:700}
-.card,.station-main-card,.station-summary,.order-card,.result-card{padding:16px;border-radius:18px;background:var(--c)}
-.muted{color:var(--s);font-size:12px}
-.route{margin:4px 0;font-size:20px;font-weight:600}
-.limit{font-size:34px;font-weight:700}
-.progress{height:6px;margin-top:10px;background:#e3e6eb;border-radius:3px;overflow:hidden}
-.progress-fill{display:block;height:100%;background:var(--b);width:0}
-.bottom,.page-bottom{flex:none;padding:12px 24px 34px}
-.page-bottom{display:flex;flex-direction:column;gap:10px}
-.primary-btn,.secondary-btn,.best-station-btn,.retry-btn{width:100%;height:90px;border:0;border-radius:30px;font-weight:600;font-size:18px}
-.primary-btn,.best-station-btn,.retry-btn{color:#fff;background:var(--b)}
-.secondary-btn{background:var(--c);color:#000}
-.primary-btn:disabled,.secondary-btn:disabled{background:#e4e6e9;color:#9ca3ad}
-.best-station-btn:disabled{opacity:1}
-.primary-btn:not(:disabled),.fuel-order-btn:not(:disabled),.order-volume-save,.retry-btn,.station-item{transition:transform .08s ease,filter .08s ease}
-.primary-btn:not(:disabled):active,.fuel-order-btn:not(:disabled):active,.order-volume-save:active,.retry-btn:active{transform:scale(.975);filter:brightness(.92)}
-.station-item:active{transform:scale(.985);filter:brightness(.93)}
-.fuel-page,.volume-page,.stations-page,.station-page,.order-page,.result-page{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;background:#fff}
+
+.status{
+ height:47px;
+ padding:0 28px 8px;
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-end;
+ font-size:15px;
+ font-weight:600;
+ flex:none
+}
+
+.content,
+.fuel-content,
+.volume-content,
+.stations-content,
+.best-content,
+.station-content,
+.order-content,
+.result-content{
+ flex:1;
+ min-height:0;
+ padding:4px 24px 14px;
+ display:flex;
+ flex-direction:column;
+ gap:14px
+}
+
+.station-content,
+.order-content,
+.best-content{
+ overflow-y:auto
+}
+
+.volume-content{
+ padding-left:18px;
+ padding-right:18px
+}
+
+.volume-content .title{
+ white-space:nowrap
+}
+
+.title{
+ margin:4px 0 0;
+ font-size:28px;
+ font-weight:700
+}
+
+.card,
+.station-main-card,
+.station-summary,
+.order-card,
+.result-card{
+ padding:16px;
+ border-radius:18px;
+ background:var(--c)
+}
+
+.muted{
+ color:var(--s);
+ font-size:12px
+}
+
+.route{
+ margin:4px 0;
+ font-size:20px;
+ font-weight:600
+}
+
+.limit{
+ font-size:34px;
+ font-weight:700
+}
+
+.progress{
+ height:6px;
+ margin-top:10px;
+ background:#e3e6eb;
+ border-radius:3px;
+ overflow:hidden
+}
+
+.progress-fill{
+ display:block;
+ height:100%;
+ background:var(--b);
+ width:0
+}
+
+.bottom,
+.page-bottom{
+ flex:none;
+ padding:12px 24px 34px
+}
+
+.page-bottom{
+ display:flex;
+ flex-direction:column;
+ gap:10px
+}
+
+.primary-btn,
+.secondary-btn,
+.best-station-btn,
+.retry-btn{
+ width:100%;
+ height:90px;
+ border:0;
+ border-radius:30px;
+ font-weight:600;
+ font-size:18px
+}
+
+.primary-btn,
+.best-station-btn,
+.retry-btn{
+ color:#fff;
+ background:var(--b)
+}
+
+.secondary-btn{
+ background:var(--c);
+ color:#000
+}
+
+.primary-btn:disabled,
+.secondary-btn:disabled,
+.best-station-btn:disabled{
+ background:#e4e6e9;
+ color:#9ca3ad
+}
+
+.primary-btn:not(:disabled),
+.best-station-btn:not(:disabled),
+.fuel-order-btn:not(:disabled),
+.order-volume-save,
+.retry-btn,
+.station-item,
+.best-result-card,
+.alternative-card{
+ transition:transform .08s ease,filter .08s ease
+}
+
+.primary-btn:not(:disabled):active,
+.best-station-btn:not(:disabled):active,
+.fuel-order-btn:not(:disabled):active,
+.order-volume-save:active,
+.retry-btn:active{
+ transform:scale(.975);
+ filter:brightness(.92)
+}
+
+.station-item:active,
+.best-result-card:active,
+.alternative-card:active{
+ transform:scale(.985);
+ filter:brightness(.93)
+}
+
+.fuel-page,
+.volume-page,
+.stations-page,
+.best-page,
+.station-page,
+.order-page,
+.result-page{
+ position:absolute;
+ inset:0;
+ z-index:2;
+ display:none;
+ flex-direction:column;
+ background:#fff
+}
+
 .visible{display:flex!important}
 
-.fuel-description{color:var(--s);font-size:13px}
-.fuel-options{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,90px);grid-auto-flow:column;gap:10px}
-.fuel-option{position:relative;height:90px;padding:12px;border:2px solid transparent;border-radius:18px;background:var(--c);text-align:left;font-size:15px;font-weight:600}
-.fuel-option.selected{border-color:var(--b);background:var(--bs)}
-.fuel-option-check{position:absolute;top:9px;right:10px;color:var(--b);font-size:18px;font-weight:700}
+.fuel-description{
+ color:var(--s);
+ font-size:13px;
+ line-height:1.45
+}
 
-.volume-list{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:10px}
-.volume-card{padding:14px 16px;border-radius:18px;background:var(--c)}
-.volume-fuel-name{margin-bottom:8px;font-size:15px;font-weight:700}
-.change-volume-fuels-btn{width:100%;height:58px;border:0;border-radius:18px;background:var(--bs);color:var(--b);font-weight:600}
+.fuel-options{
+ flex:1;
+ min-height:0;
+ overflow:auto;
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ grid-template-rows:repeat(4,90px);
+ grid-auto-flow:column;
+ gap:10px
+}
 
-.wheel-wrap{position:relative;width:100%;height:150px;border:1px solid #d9dde3;border-radius:18px;background:#fff;overflow:hidden}
-.wheel-list{height:150px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:50px 0}
+.fuel-option{
+ position:relative;
+ height:90px;
+ padding:12px;
+ border:2px solid transparent;
+ border-radius:18px;
+ background:var(--c);
+ text-align:left;
+ font-size:15px;
+ font-weight:600
+}
+
+.fuel-option.selected{
+ border-color:var(--b);
+ background:var(--bs)
+}
+
+.fuel-option-check{
+ position:absolute;
+ top:9px;
+ right:10px;
+ color:var(--b);
+ font-size:18px;
+ font-weight:700
+}
+
+.volume-list{
+ flex:1;
+ min-height:0;
+ overflow:auto;
+ display:flex;
+ flex-direction:column;
+ gap:10px
+}
+
+.volume-card{
+ padding:14px 16px;
+ border-radius:18px;
+ background:var(--c)
+}
+
+.volume-fuel-name{
+ margin-bottom:8px;
+ font-size:15px;
+ font-weight:700
+}
+
+.change-volume-fuels-btn{
+ width:100%;
+ height:58px;
+ border:0;
+ border-radius:18px;
+ background:var(--bs);
+ color:var(--b);
+ font-weight:600
+}
+
+.wheel-wrap{
+ position:relative;
+ width:100%;
+ height:150px;
+ border:1px solid #d9dde3;
+ border-radius:18px;
+ background:#fff;
+ overflow:hidden
+}
+
+.wheel-list{
+ height:150px;
+ overflow-y:auto;
+ scroll-snap-type:y mandatory;
+ scrollbar-width:none;
+ -webkit-overflow-scrolling:touch;
+ padding:50px 0
+}
+
 .wheel-list::-webkit-scrollbar{display:none}
-.wheel-item{height:50px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;color:#9ca3ad;font-size:20px;font-weight:600;user-select:none}
-.wheel-item.active{color:#000;font-size:28px;font-weight:700}
-.wheel-focus{position:absolute;left:16px;right:16px;top:50px;height:50px;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;pointer-events:none}
-.wheel-unit{position:absolute;right:22px;top:65px;font-size:17px;font-weight:700;pointer-events:none}
 
-.fuel-selection{height:90px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 8px 14px;border-radius:18px;background:var(--c)}
-.fuel-selection-label{color:var(--s);font-size:12px}
-.selected-fuels{margin-top:4px;font-size:14px;font-weight:600}
-.change-fuel-btn{flex:none;width:150px;height:72px;border:0;border-radius:20px;background:#fff;color:var(--b);font-size:13px;font-weight:600}
+.wheel-item{
+ height:50px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ scroll-snap-align:center;
+ color:#9ca3ad;
+ font-size:20px;
+ font-weight:600;
+ user-select:none
+}
 
-.manual-search-title{font-size:15px;font-weight:700}
-.station-search{width:100%;height:70px;padding:0 18px;border:1px solid #d9dde3;border-radius:18px;font-size:16px}
-.station-warning{display:none;color:var(--s);font-size:12px}
-.search-message{color:var(--s);font-size:13px}
-.station-list{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px}
-.station-item{width:100%;padding:12px 14px;border:0;border-radius:18px;background:var(--c);text-align:left}
-.station-name{font-size:16px;font-weight:700}
-.station-info{margin-top:5px;display:flex;flex-wrap:wrap;gap:6px}
-.station-distance{color:var(--b);font-size:12px;font-weight:600}
-.station-direction{padding:3px 7px;border:1px solid #dfe3e8;border-radius:7px;background:#f3f4f6;color:var(--s);font-size:10px}
-.station-fuel-row{margin-top:7px;font-size:12px}
+.wheel-item.active{
+ color:#000;
+ font-size:28px;
+ font-weight:700
+}
+
+.wheel-focus{
+ position:absolute;
+ left:16px;
+ right:16px;
+ top:50px;
+ height:50px;
+ border-top:1px solid #e5e7eb;
+ border-bottom:1px solid #e5e7eb;
+ pointer-events:none
+}
+
+.wheel-unit{
+ position:absolute;
+ right:22px;
+ top:65px;
+ font-size:17px;
+ font-weight:700;
+ pointer-events:none
+}
+
+.fuel-selection{
+ height:90px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ padding:8px 8px 8px 14px;
+ border-radius:18px;
+ background:var(--c)
+}
+
+.fuel-selection-label{
+ color:var(--s);
+ font-size:12px
+}
+
+.selected-fuels{
+ margin-top:4px;
+ font-size:14px;
+ font-weight:600
+}
+
+.change-fuel-btn{
+ flex:none;
+ width:150px;
+ height:72px;
+ border:0;
+ border-radius:20px;
+ background:#fff;
+ color:var(--b);
+ font-size:13px;
+ font-weight:600
+}
+
+.manual-search-title{
+ font-size:15px;
+ font-weight:700
+}
+
+.station-search{
+ width:100%;
+ height:70px;
+ padding:0 18px;
+ border:1px solid #d9dde3;
+ border-radius:18px;
+ font-size:16px
+}
+
+.station-warning,
+.best-warning{
+ display:none;
+ padding:10px 12px;
+ border-radius:12px;
+ background:var(--ws);
+ color:var(--w);
+ font-size:12px;
+ line-height:1.45
+}
+
+.search-message,
+.best-message{
+ color:var(--s);
+ font-size:13px
+}
+
+.station-list{
+ flex:1;
+ min-height:0;
+ display:flex;
+ flex-direction:column;
+ gap:8px;
+ overflow:auto
+}
+
+.best-list{
+ flex:none;
+ min-height:auto;
+ display:flex;
+ flex-direction:column;
+ gap:8px
+}
+
+.station-item,
+.best-result-card{
+ width:100%;
+ padding:12px 14px;
+ border:0;
+ border-radius:18px;
+ background:var(--c);
+ text-align:left
+}
+
+.station-item,
+.best-result-card{
+ flex:none
+}
+
+.station-name{
+ font-size:16px;
+ font-weight:700
+}
+
+.station-info{
+ margin-top:5px;
+ display:flex;
+ flex-wrap:wrap;
+ gap:6px
+}
+
+.station-distance{
+ color:var(--b);
+ font-size:12px;
+ font-weight:600
+}
+
+.station-direction{
+ padding:3px 7px;
+ border:1px solid #dfe3e8;
+ border-radius:7px;
+ background:#f3f4f6;
+ color:var(--s);
+ font-size:10px
+}
+
+.station-fuel-row{
+ margin-top:7px;
+ font-size:12px
+}
+
 .ready{font-weight:600}
 .warning{color:var(--w)}
 .missing{color:var(--s)}
-.station-address{margin-top:7px;color:var(--s);font-size:11px}
 
-.station-detail-name{font-size:20px;font-weight:700}
-.station-detail-address{margin-top:5px;color:var(--s);font-size:12px}
-.station-detail-meta{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
-.station-limit-card{padding:14px 16px;border-radius:18px;background:var(--bs)}
-.station-limit-value{margin-top:3px;font-size:20px;font-weight:700}
-.station-limit-note{margin-top:4px;color:var(--s);font-size:12px;line-height:1.4}
+.station-address{
+ margin-top:7px;
+ color:var(--s);
+ font-size:11px
+}
 
-.detail-fuels{display:flex;flex-direction:column;gap:10px}
-.detail-fuel-card{padding:14px;border-radius:18px;background:var(--c)}
-.detail-fuel-card.unavailable{opacity:.72}
-.detail-fuel-top,.detail-fuel-meta{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.detail-fuel-name{font-size:16px;font-weight:700}
-.detail-fuel-price{font-size:14px;font-weight:700;white-space:nowrap}
-.detail-fuel-meta{margin-top:5px;min-height:30px}
-.detail-fuel-volume{color:var(--s);font-size:12px;line-height:30px}
-.order-count-badge{height:30px;display:flex;align-items:center;padding:0 10px;border-radius:11px;background:var(--gs);color:var(--g);font-size:11px;font-weight:600;white-space:nowrap}
+.best-list-note{
+ flex:none;
+ margin:0 2px 4px;
+ color:var(--s);
+ font-size:11px;
+ line-height:1.45
+}
 
-.detail-message,.order-note,.fueling-status{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--gs);color:var(--g);font-size:12px;line-height:1.4}
-.detail-message.warning,.order-note.warning,.fueling-status.warning{
+.best-alternatives-title{
+ flex:none;
+ margin:12px 2px 2px;
+ font-size:16px;
+ font-weight:700
+}
+
+.best-result-card{
+ overflow:hidden
+}
+
+.best-result-card.base{
+ background:var(--bs);
+ border:1px solid #ffd1b3
+}
+
+/* Восстановленная нормальная компоновка шапки карточки */
+.best-result-head{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(105px,42%);
+ gap:10px;
+ align-items:start
+}
+
+.best-result-head-main{
+ min-width:0
+}
+
+.best-result-head-side{
+ min-width:0;
+ text-align:right
+}
+
+.best-result-head .station-name{
+ word-break:normal;
+ overflow-wrap:break-word
+}
+
+.best-base-badge{
+ display:inline-flex;
+ padding:5px 8px;
+ border-radius:8px;
+ background:#fff;
+ color:var(--b);
+ font-size:10px;
+ line-height:1.2;
+ font-weight:700;
+ text-align:center
+}
+
+.best-nearest-meta{
+ margin-top:5px;
+ display:grid;
+ grid-template-columns:minmax(0,1fr) auto;
+ gap:10px;
+ align-items:start
+}
+
+.best-nearest-address{
+ min-width:0;
+ color:var(--s);
+ font-size:10px;
+ line-height:1.35
+}
+
+.best-nearest-distance{
+ color:var(--b);
+ font-size:12px;
+ line-height:1.35;
+ font-weight:600;
+ white-space:nowrap;
+ text-align:right
+}
+
+.best-result-address{
+ color:var(--s);
+ font-size:10px;
+ line-height:1.35;
+ text-align:right;
+ word-break:normal;
+ overflow-wrap:break-word
+}
+
+.best-result-line{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(95px,42%);
+ gap:10px;
+ margin-top:8px;
+ padding-top:8px;
+ border-top:1px solid #e0e3e7
+}
+
+.best-result-line-main{
+ min-width:0
+}
+
+.best-result-line-side{
+ display:flex;
+ flex-direction:column;
+ align-items:flex-end;
+ justify-content:flex-start;
+ gap:3px;
+ text-align:right;
+ min-width:0
+}
+
+.best-result-fuel{
+ font-size:13px;
+ font-weight:700
+}
+
+.best-result-price{
+ margin-top:2px;
+ font-size:12px
+}
+
+.best-result-saving{
+ color:var(--g);
+ font-size:11px;
+ line-height:1.3;
+ font-weight:700
+}
+
+.best-result-loss{
+ display:inline-flex;
+ padding:4px 7px;
+ border-radius:8px;
+ background:#fff0ee;
+ color:#a33a32;
+ font-size:11px;
+ line-height:1.25;
+ font-weight:700
+}
+
+.best-result-same{
+ color:var(--s);
+ font-size:11px;
+ line-height:1.3;
+ font-weight:600
+}
+
+.best-result-unavailable{
+ color:var(--w);
+ font-size:10px;
+ line-height:1.3;
+ font-weight:600
+}
+
+.best-empty{
+ flex:none;
+ padding:12px 14px;
+ border-radius:16px;
+ background:var(--c);
+ color:var(--s);
+ font-size:12px
+}
+
+.station-detail-name{
+ font-size:20px;
+ font-weight:700
+}
+
+.station-detail-address{
+ margin-top:5px;
+ color:var(--s);
+ font-size:12px
+}
+
+.station-detail-meta{
+ margin-top:10px;
+ display:flex;
+ flex-wrap:wrap;
+ gap:6px
+}
+
+.station-limit-card{
+ padding:14px 16px;
+ border-radius:18px;
+ background:var(--bs)
+}
+
+.station-limit-value{
+ margin-top:3px;
+ font-size:20px;
+ font-weight:700
+}
+
+.station-limit-note{
+ margin-top:4px;
+ color:var(--s);
+ font-size:12px;
+ line-height:1.4
+}
+
+.best-alternative{
+ padding:14px 16px;
+ border-radius:18px;
+ background:var(--gs)
+}
+
+.best-alternative-title{
+ color:var(--g);
+ font-size:15px;
+ font-weight:700
+}
+
+.best-alternative-note{
+ margin-top:4px;
+ color:#4b5563;
+ font-size:11px;
+ line-height:1.4
+}
+
+.alternative-list{
+ margin-top:10px;
+ display:flex;
+ flex-direction:column;
+ gap:8px
+}
+
+.alternative-card{
+ flex:none;
+ width:100%;
+ padding:12px;
+ border:0;
+ border-radius:14px;
+ background:#fff;
+ text-align:left;
+ overflow:hidden
+}
+
+/* Эта раскладка уже нормально работала на вашем втором скриншоте */
+.alternative-head{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(105px,42%);
+ gap:10px;
+ align-items:start
+}
+
+.alternative-head-main{
+ min-width:0
+}
+
+.alternative-head-address{
+ min-width:0;
+ color:var(--s);
+ font-size:10px;
+ line-height:1.35;
+ text-align:right;
+ word-break:normal;
+ overflow-wrap:break-word
+}
+
+.alternative-name{
+ font-size:14px;
+ font-weight:700;
+ word-break:normal;
+ overflow-wrap:break-word
+}
+
+.detail-fuels{
+ display:flex;
+ flex-direction:column;
+ gap:10px
+}
+
+.detail-fuel-card{
+ padding:14px;
+ border-radius:18px;
+ background:var(--c)
+}
+
+.detail-fuel-card.unavailable{
+ opacity:.72
+}
+
+.detail-fuel-top,
+.detail-fuel-meta{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:12px
+}
+
+.detail-fuel-name{
+ font-size:16px;
+ font-weight:700
+}
+
+.detail-fuel-price{
+ font-size:14px;
+ font-weight:700;
+ white-space:nowrap
+}
+
+.detail-fuel-meta{
+ margin-top:5px;
+ min-height:30px
+}
+
+.detail-fuel-volume{
+ color:var(--s);
+ font-size:12px;
+ line-height:30px
+}
+
+.order-count-badge{
+ height:30px;
+ display:flex;
+ align-items:center;
+ padding:0 10px;
+ border-radius:11px;
+ background:var(--gs);
+ color:var(--g);
+ font-size:11px;
+ font-weight:600;
+ white-space:nowrap
+}
+
+.detail-message,
+.order-note,
+.fueling-status{
+ margin-top:10px;
+ padding:10px 12px;
+ border-radius:12px;
+ background:var(--gs);
+ color:var(--g);
+ font-size:12px;
+ line-height:1.4
+}
+
+.detail-message.warning,
+.order-note.warning,
+.fueling-status.warning{
  background:var(--ws);
  color:var(--w)
 }
 
-.order-note.problem,.order-note.error{
+.order-note.problem,
+.order-note.error{
  background:#fff0ee;
  color:#a33a32;
  font-weight:700
 }
 
-.fuel-order-btn{width:100%;height:90px;margin-top:12px;border:0;border-radius:30px;background:var(--b);color:#fff;font-size:17px;font-weight:700}
-.fuel-order-btn:disabled{background:#e4e6e9;color:#9ca3ad}
+.fuel-order-btn{
+ width:100%;
+ height:90px;
+ margin-top:12px;
+ border:0;
+ border-radius:30px;
+ background:var(--b);
+ color:#fff;
+ font-size:17px;
+ font-weight:700
+}
 
-.summary-title{margin-bottom:10px;font-size:14px;font-weight:700}
-.summary-row,.order-row,.result-row{display:flex;justify-content:space-between;gap:12px;margin-top:7px;font-size:13px}
-.summary-row span,.order-row span,.result-row span{flex:1}
-.summary-row strong,.order-row strong,.result-row strong{white-space:nowrap}
-.summary-total,.summary-limit{margin-top:10px;padding-top:10px;border-top:1px solid #dfe3e8}
-.limit-warning{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--ws);color:var(--w);font-size:12px}
+.fuel-order-btn:disabled{
+ background:#e4e6e9;
+ color:#9ca3ad
+}
 
-.order-station{font-size:15px;font-weight:700}
-.order-address{margin-top:4px;color:var(--s);font-size:12px}
-.order-fuel{font-size:20px;font-weight:700}
-.change-order-volume-btn{width:100%;height:90px;margin-top:14px;border:0;border-radius:30px;background:#fff;color:var(--b);font-weight:700}
-.change-order-volume-btn:disabled{color:#9ca3ad}
+.summary-title{
+ margin-bottom:10px;
+ font-size:14px;
+ font-weight:700
+}
 
-.order-volume-editor{display:none;margin-top:12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch}
-.order-volume-editor.visible{display:grid}
-.order-volume-editor #order-volume-wheel{width:100%;height:150px;min-width:0}
-.order-volume-save{width:100%;height:150px;border:0;border-radius:18px;background:var(--b);color:#fff;font-size:15px;font-weight:700}
+.summary-row,
+.order-row,
+.result-row{
+ display:flex;
+ justify-content:space-between;
+ gap:12px;
+ margin-top:7px;
+ font-size:13px
+}
 
-.pump-title{font-size:14px;font-weight:700}
-.pump-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pump-btn{height:90px;padding:8px;border:2px solid transparent;border-radius:18px;background:var(--c);font-size:13px;font-weight:600}
-.pump-btn.selected{border-color:var(--b);background:var(--bs)}
-.pump-btn:disabled{color:#9097a1;background:#e8eaed}
-.pump-status{display:block;margin-top:3px;font-size:10px}
+.summary-row span,
+.order-row span,
+.result-row span{
+ flex:1
+}
 
-.result-content{justify-content:center;align-items:center;text-align:center;padding-bottom:80px}
-.result-check{width:72px;height:72px;border-radius:50%;background:var(--gs);color:#0a5;display:flex;align-items:center;justify-content:center;font-size:42px}
-.result-title{font-size:24px;font-weight:700}
-.result-card{width:100%;text-align:left}
-.result-note{width:100%;padding:14px 16px;border-radius:14px;background:var(--c);color:#374151;font-size:15px;font-weight:600;line-height:1.45}
+.summary-row strong,
+.order-row strong,
+.result-row strong{
+ white-space:nowrap
+}
 
-.error-overlay{position:absolute;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:24px;background:#ffffff47;backdrop-filter:blur(4px)}
-.error-overlay.visible{display:flex}
-.error-dialog{width:100%;padding:18px 16px 16px;border-radius:20px;background:var(--es)}
-.error-message{margin:0 0 16px;color:var(--e);text-align:center}
-.retry-btn{background:#cb6150e0}
+.summary-total,
+.summary-limit{
+ margin-top:10px;
+ padding-top:10px;
+ border-top:1px solid #dfe3e8
+}
+
+.limit-warning{
+ margin-top:10px;
+ padding:10px 12px;
+ border-radius:12px;
+ background:#fff0ee;
+ color:#a33a32;
+ font-size:12px;
+ font-weight:700
+}
+
+.order-station{
+ font-size:15px;
+ font-weight:700
+}
+
+.order-address{
+ margin-top:4px;
+ color:var(--s);
+ font-size:12px
+}
+
+.order-fuel{
+ font-size:20px;
+ font-weight:700
+}
+
+.change-order-volume-btn{
+ width:100%;
+ height:90px;
+ margin-top:14px;
+ border:0;
+ border-radius:30px;
+ background:#fff;
+ color:var(--b);
+ font-weight:700
+}
+
+.change-order-volume-btn:disabled{
+ color:#9ca3ad
+}
+
+.order-volume-editor{
+ display:none;
+ margin-top:12px;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+ gap:12px;
+ align-items:stretch
+}
+
+.order-volume-editor.visible{
+ display:grid
+}
+
+.order-volume-editor #order-volume-wheel{
+ width:100%;
+ height:150px;
+ min-width:0
+}
+
+.order-volume-save{
+ width:100%;
+ height:150px;
+ border:0;
+ border-radius:18px;
+ background:var(--b);
+ color:#fff;
+ font-size:15px;
+ font-weight:700
+}
+
+.pump-title{
+ font-size:14px;
+ font-weight:700
+}
+
+.pump-note{
+ margin-top:6px;
+ color:var(--s);
+ font-size:11px;
+ font-weight:400;
+ line-height:1.4
+}
+
+.pump-list{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px
+}
+
+.pump-btn{
+ height:90px;
+ padding:8px;
+ border:2px solid transparent;
+ border-radius:18px;
+ background:var(--c);
+ font-size:13px;
+ font-weight:600
+}
+
+.pump-btn.selected{
+ border-color:var(--b);
+ background:var(--bs)
+}
+
+.pump-btn:disabled{
+ color:#9097a1;
+ background:#e8eaed
+}
+
+.pump-status{
+ display:block;
+ margin-top:3px;
+ font-size:10px
+}
+
+.result-content{
+ justify-content:center;
+ align-items:center;
+ text-align:center;
+ padding-bottom:80px
+}
+
+.result-check{
+ width:72px;
+ height:72px;
+ border-radius:50%;
+ background:var(--gs);
+ color:#0a5;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:42px
+}
+
+.result-title{
+ font-size:24px;
+ font-weight:700
+}
+
+.result-card{
+ width:100%;
+ text-align:left
+}
+
+.result-note{
+ width:100%;
+ padding:14px 16px;
+ border-radius:14px;
+ background:var(--c);
+ color:#374151;
+ font-size:15px;
+ font-weight:600;
+ line-height:1.45
+}
+
+.error-overlay{
+ position:absolute;
+ inset:0;
+ z-index:5;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:24px;
+ background:#ffffff47;
+ backdrop-filter:blur(4px)
+}
+
+.error-overlay.visible{
+ display:flex
+}
+
+.error-dialog{
+ width:100%;
+ padding:18px 16px 16px;
+ border-radius:20px;
+ background:var(--es)
+}
+
+.error-message{
+ margin:0 0 16px;
+ color:var(--e);
+ text-align:center
+}
+
+.retry-btn{
+ background:#cb6150e0
+}
 </style>
 </head>
+
 <body>
 <main class="screen restoring" id="app">
 
-<div class="status"><span>9:41</span><span>▮▮▮ ▭</span></div>
+<div class="status">
+ <span>9:41</span>
+ <span>▮▮▮ ▭</span>
+</div>
 
 <div class="content">
  <div class="title">Заправка в рейсе</div>
+
  <section class="card">
   <div class="muted">Текущий рейс · <span id="trip-date">—</span></div>
   <div class="route" id="trip-route">Загрузка...</div>
   <div class="muted" id="trip-truck">Тягач —</div>
  </section>
+
  <section class="card">
   <div class="muted">Лимит на топливо на весь рейс</div>
   <div class="limit" id="limit-left">—</div>
@@ -166,15 +1114,23 @@ button,input{font:inherit}
  </section>
 </div>
 
-<div class="bottom"><button class="primary-btn" id="start-fueling-btn">Заправиться</button></div>
+<div class="bottom">
+ <button class="primary-btn" id="start-fueling-btn">Заправиться</button>
+</div>
 
 <section class="fuel-page" id="fuel-page">
  <div class="status"><span>9:41</span><span>▮▮▮ ▭</span></div>
+
  <div class="fuel-content">
   <div class="title">Выберите топливо</div>
-  <div class="fuel-description">Выберите один или несколько типов топлива для этого рейса.</div>
+
+  <div class="fuel-description">
+   Выберите один или несколько типов топлива для этого рейса.
+  </div>
+
   <div class="fuel-options" id="fuel-options"></div>
  </div>
+
  <div class="page-bottom">
   <button class="primary-btn" id="fuel-continue-btn" disabled>Продолжить</button>
   <button class="secondary-btn" id="fuel-back-btn">Назад</button>
@@ -183,11 +1139,23 @@ button,input{font:inherit}
 
 <section class="volume-page" id="volume-page">
  <div class="status"><span>9:41</span><span>▮▮▮ ▭</span></div>
+
  <div class="volume-content">
-  <div class="title">Сколько топлива нужно?</div>
+  <div class="title">Сколько всего топлива нужно?</div>
+
+  <div class="fuel-description">
+   Укажите общий необходимый объём. Если требуется заправить разные баки —
+   например, основной бак и бак рефрижератора, — заправку каждого бака потребуется
+   оформить отдельным заказом.
+  </div>
+
   <div class="volume-list" id="volume-list"></div>
-  <button class="change-volume-fuels-btn" id="volume-change-fuels-btn">Изменить выбор видов топлива</button>
+
+  <button class="change-volume-fuels-btn" id="volume-change-fuels-btn">
+   Изменить выбор видов топлива
+  </button>
  </div>
+
  <div class="page-bottom">
   <button class="primary-btn" id="volume-continue-btn" disabled>Продолжить</button>
   <button class="secondary-btn" id="volume-back-btn">Назад</button>
@@ -196,6 +1164,7 @@ button,input{font:inherit}
 
 <section class="stations-page" id="stations-page">
  <div class="status"><span>9:41</span><span>▮▮▮ ▭</span></div>
+
  <div class="stations-content">
   <div class="title">Выберите АЗС</div>
 
@@ -204,15 +1173,25 @@ button,input{font:inherit}
     <div class="fuel-selection-label">Выбранное топливо</div>
     <div class="selected-fuels" id="selected-fuels"></div>
    </div>
+
    <button class="change-fuel-btn" id="change-fuel-btn">Изменить</button>
   </div>
 
-  <button class="best-station-btn" disabled>Подобрать выгодную АЗС</button>
+  <button class="best-station-btn" id="best-station-btn">
+   Подобрать выгодную АЗС
+  </button>
 
   <div class="manual-search-title">Ручной выбор АЗС</div>
-  <input class="station-search" id="station-search" type="search" placeholder="Название, сеть или адрес АЗС" autocomplete="off">
 
-  <div class="station-warning" id="station-warning">Проверьте сторону расположения АЗС на дороге</div>
+  <input
+   class="station-search"
+   id="station-search"
+   type="search"
+   placeholder="Название, сеть или адрес АЗС"
+   autocomplete="off"
+  >
+
+  <div class="station-warning" id="station-warning"></div>
   <div class="station-list" id="station-list"></div>
   <div class="search-message" id="search-message"></div>
  </div>
@@ -222,11 +1201,29 @@ button,input{font:inherit}
  </div>
 </section>
 
+<section class="best-page" id="best-page">
+ <div class="status"><span>9:41</span><span>▮▮▮ ▭</span></div>
+
+ <div class="best-content">
+  <div class="title">Выгодные АЗС</div>
+  <div class="best-warning" id="best-warning"></div>
+  <div class="best-message" id="best-message"></div>
+  <div class="best-list" id="best-list"></div>
+ </div>
+
+ <div class="page-bottom">
+  <button class="secondary-btn" id="best-back-btn">Назад</button>
+ </div>
+</section>
+
 <section class="station-page" id="station-page">
  <div class="status"><span>9:41</span><span>▮▮▮ ▭</span></div>
+
  <div class="station-content">
   <div class="title">Выбранная АЗС</div>
+
   <div class="station-main-card" id="station-main-card"></div>
+  <div class="best-alternative" id="best-alternative" hidden></div>
   <div class="station-limit-card" id="station-limit-card"></div>
   <div class="detail-fuels" id="detail-fuels"></div>
   <div class="station-summary" id="station-summary"></div>
@@ -262,6 +1259,11 @@ button,input{font:inherit}
 
   <div class="pump-title" id="pump-title">
    Выберите колонку, на которой вы заправляетесь
+
+   <div class="pump-note">
+    На АЗС колонки могут быть обозначены буквами.
+    Порядок численного обозначения соответствует алфавитному порядку.
+   </div>
   </div>
 
   <div class="pump-list" id="order-pump-list"></div>
@@ -287,12 +1289,15 @@ button,input{font:inherit}
   </div>
 
   <div class="result-note">
-   Чек поступит диспетчеру<br>после обработки заказа АЗС
+   Чек поступит диспетчеру<br>
+   после обработки заказа АЗС
   </div>
  </div>
 
  <div class="page-bottom">
-  <button class="primary-btn" id="result-action-btn">Вернуться на главную страницу</button>
+  <button class="primary-btn" id="result-action-btn">
+   Вернуться на главную страницу
+  </button>
  </div>
 </section>
 
